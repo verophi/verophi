@@ -1,0 +1,29 @@
+FROM golang:1.26.4-bookworm@sha256:d1af0fd434fced72b3b4335440df9d0fd43a4c737ea14aed18b6b3f4e9aab58d AS builder
+
+ARG VERSION=dev
+ARG COMMIT=unknown
+ARG BUILD_DATE=unknown
+
+WORKDIR /src
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
+COPY . .
+RUN CGO_ENABLED=0 go build -trimpath \
+    -ldflags="-s -w \
+      -X 'github.com/verophi/verophi/internal/version_info.Version=${VERSION}' \
+      -X 'github.com/verophi/verophi/internal/version_info.Commit=${COMMIT}' \
+      -X 'github.com/verophi/verophi/internal/version_info.BuildDate=${BUILD_DATE}'" \
+    -o /out/verophi ./cmd/verophi \
+    && mkdir -p /out/tmp /out/trivy-cache
+
+FROM aquasec/trivy:0.71.2@sha256:f5d0e600ecda7449e2a9b272805aef698631d3bb3f3a739a750de2c6819acdc9 AS trivy
+
+FROM cgr.dev/chainguard/busybox:latest@sha256:accc5c911abaf2f70487f93cad07b0891d502cbba7e79f96d1db9074ef40928a
+ENV HOME=/tmp \
+    TRIVY_CACHE_DIR=/var/lib/trivy
+COPY --from=builder /out/verophi /usr/local/bin/verophi
+COPY --from=trivy /usr/local/bin/trivy /usr/local/bin/trivy
+COPY --from=builder --chown=65532:65532 /out/tmp /tmp
+COPY --from=builder --chown=65532:65532 /out/trivy-cache /var/lib/trivy
+USER 65532
+ENTRYPOINT ["sh", "-c"]

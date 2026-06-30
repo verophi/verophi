@@ -1,0 +1,33 @@
+# Secrets and local environment — MUST never enter the build context
+.env
+.env.*
+
+# Version control and CI metadata
+.git
+.gitignore
+.github
+
+# IDE and editor state
+.idea
+.vscode
+*.swp
+*.swo
+
+# Build artifacts and local outputs
+bin/
+/verophi
+coverage.out
+t.json
+verophi-output-*.json
+
+# Tooling config not needed for the build
+.mise.toml
+
+# Container build files themselves
+Dockerfile
+Dockerfile.trivy
+.dockerignore
+
+# Documentation (not needed to compile the binary)
+*.md
+docs/

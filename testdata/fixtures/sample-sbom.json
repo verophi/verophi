@@ -1,0 +1,119 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "components": [
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1",
+      "name": "log4j-core",
+      "version": "2.14.1",
+      "purl": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/lodash@4.17.20",
+      "name": "lodash",
+      "version": "4.17.20",
+      "purl": "pkg:npm/lodash@4.17.20"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:pypi/requests@2.25.0",
+      "name": "requests",
+      "version": "2.25.0",
+      "purl": "pkg:pypi/requests@2.25.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:golang/golang.org/x/crypto@0.1.0",
+      "name": "golang.org/x/crypto",
+      "version": "0.1.0",
+      "purl": "pkg:golang/golang.org/x/crypto@0.1.0"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:npm/express@4.17.1",
+      "name": "express",
+      "version": "4.17.1",
+      "purl": "pkg:npm/express@4.17.1"
+    },
+    {
+      "type": "library",
+      "bom-ref": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.12.0",
+      "name": "jackson-databind",
+      "version": "2.12.0",
+      "purl": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.12.0"
+    }
+  ],
+  "vulnerabilities": [
+    {
+      "id": "CVE-2021-44228",
+      "ratings": [
+        {"severity": "critical", "score": 10.0}
+      ],
+      "affects": [
+        {"ref": "pkg:maven/org.apache.logging.log4j/log4j-core@2.14.1"}
+      ],
+      "recommendation": "Upgrade org.apache.logging.log4j:log4j-core to version 2.17.1"
+    },
+    {
+      "id": "CVE-2021-23337",
+      "ratings": [
+        {"severity": "high", "score": 7.2}
+      ],
+      "affects": [
+        {"ref": "pkg:npm/lodash@4.17.20"}
+      ],
+      "recommendation": "Upgrade lodash to version 4.17.21"
+    },
+    {
+      "id": "CVE-2021-23358",
+      "ratings": [
+        {"severity": "high", "score": 7.2}
+      ],
+      "affects": [
+        {"ref": "pkg:npm/lodash@4.17.20"}
+      ],
+      "recommendation": "Upgrade lodash to version 4.17.21"
+    },
+    {
+      "id": "CVE-2023-45853",
+      "ratings": [
+        {"severity": "critical", "score": 9.8}
+      ],
+      "affects": [
+        {"ref": "pkg:pypi/requests@2.25.0"}
+      ]
+    },
+    {
+      "id": "CVE-2023-44487",
+      "ratings": [
+        {"severity": "high", "score": 7.5}
+      ],
+      "affects": [
+        {"ref": "pkg:golang/golang.org/x/crypto@0.1.0"}
+      ],
+      "recommendation": "Upgrade golang.org/x/crypto to version 0.17.0"
+    },
+    {
+      "id": "CVE-2024-29041",
+      "ratings": [
+        {"severity": "medium", "score": 6.1}
+      ],
+      "affects": [
+        {"ref": "pkg:npm/express@4.17.1"}
+      ],
+      "recommendation": "Upgrade express to version 4.19.2"
+    },
+    {
+      "id": "CVE-2022-42003",
+      "ratings": [
+        {"severity": "high", "score": 7.5}
+      ],
+      "affects": [
+        {"ref": "pkg:maven/com.fasterxml.jackson.core/jackson-databind@2.12.0"}
+      ],
+      "recommendation": "Upgrade com.fasterxml.jackson.core:jackson-databind to version 2.12.7.1"
+    }
+  ]
+}

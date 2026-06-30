@@ -1,0 +1,502 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/verophi/verophi/schema/analysis-result-1.0.schema.json",
+  "title": "verophi AnalysisResult",
+  "description": "Machine-readable output of `verophi analyze --format json` for schemaVersion 1.0. Severity serializes as its lowercase name. Slice fields are always present (never null); reducibleImpactScore, a request's mergeEfficiency, and splitCandidate are null when not applicable.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "correlation",
+    "advisorySummary",
+    "totalImpactScore",
+    "reducibleImpactScore",
+    "changeRequests",
+    "uncorrelatedAdvisories"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": "1.0"
+    },
+    "correlation": {
+      "$ref": "#/definitions/correlation"
+    },
+    "advisorySummary": {
+      "$ref": "#/definitions/advisorySummary"
+    },
+    "totalImpactScore": {
+      "type": "number",
+      "minimum": 0
+    },
+    "reducibleImpactScore": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0,
+      "description": "Deduplicated VIS that open updates collectively remove. null when correlation did not complete (not_run or failed)."
+    },
+    "changeRequests": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/changeRequest"
+      }
+    },
+    "uncorrelatedAdvisories": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/advisory"
+      }
+    }
+  },
+  "definitions": {
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "unknown"
+      ]
+    },
+    "changeType": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "risk"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "patch",
+            "minor",
+            "major",
+            "pin",
+            "pinDigest",
+            "bump",
+            "rollback",
+            "digest",
+            "replacement",
+            "lockFileMaintenance",
+            "unknown"
+          ]
+        },
+        "risk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        }
+      }
+    },
+    "riskTier": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "risk"
+      ],
+      "description": "A change request's risk tier (the highest-risk child change type). name is the empty string for unparsed requests, which carry no assessments.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "enum": [
+            "patch",
+            "minor",
+            "major",
+            "pin",
+            "pinDigest",
+            "bump",
+            "rollback",
+            "digest",
+            "replacement",
+            "lockFileMaintenance",
+            "unknown",
+            ""
+          ]
+        },
+        "risk": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        }
+      }
+    },
+    "correlation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "platform",
+        "repository"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "not_run",
+            "complete",
+            "failed"
+          ]
+        },
+        "platform": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        }
+      }
+    },
+    "advisorySummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "correlated",
+        "uncorrelated",
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "correlated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "uncorrelated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "critical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "high": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "medium": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "low": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "occurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "bomRef",
+        "purl",
+        "dependencyName",
+        "ecosystem",
+        "affectedVersion",
+        "fixVersion",
+        "addressed"
+      ],
+      "properties": {
+        "bomRef": {
+          "type": "string"
+        },
+        "purl": {
+          "type": "string"
+        },
+        "dependencyName": {
+          "type": "string"
+        },
+        "ecosystem": {
+          "type": "string"
+        },
+        "affectedVersion": {
+          "type": "string"
+        },
+        "fixVersion": {
+          "type": "string",
+          "description": "Fix version derived from the advisory recommendation; empty when none could be derived."
+        },
+        "addressed": {
+          "type": "boolean"
+        }
+      }
+    },
+    "advisoryRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "severity"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/severity"
+        }
+      }
+    },
+    "advisoryMatch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "advisory",
+        "occurrence"
+      ],
+      "properties": {
+        "advisory": {
+          "$ref": "#/definitions/advisoryRef"
+        },
+        "occurrence": {
+          "$ref": "#/definitions/occurrence"
+        }
+      }
+    },
+    "change": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dependencyName",
+        "currentVersion",
+        "targetVersion",
+        "changeType"
+      ],
+      "properties": {
+        "dependencyName": {
+          "type": "string"
+        },
+        "currentVersion": {
+          "type": "string"
+        },
+        "targetVersion": {
+          "type": "string"
+        },
+        "changeType": {
+          "$ref": "#/definitions/changeType"
+        }
+      }
+    },
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "change",
+        "advisoryMatches",
+        "impactScore"
+      ],
+      "properties": {
+        "change": {
+          "$ref": "#/definitions/change"
+        },
+        "advisoryMatches": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/advisoryMatch"
+          }
+        },
+        "impactScore": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "splitCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "dependencyName",
+        "impactScore",
+        "shareOfRequest",
+        "riskTier",
+        "mergeEfficiency"
+      ],
+      "properties": {
+        "dependencyName": {
+          "type": "string"
+        },
+        "impactScore": {
+          "type": "number"
+        },
+        "shareOfRequest": {
+          "type": "number"
+        },
+        "riskTier": {
+          "$ref": "#/definitions/changeType"
+        },
+        "mergeEfficiency": {
+          "type": "number"
+        }
+      }
+    },
+    "fixSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total",
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ],
+      "properties": {
+        "total": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "critical": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "high": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "medium": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "low": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "changeRequest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "number",
+        "url",
+        "title",
+        "platform",
+        "ageDays",
+        "labels",
+        "status",
+        "riskTier",
+        "hasUnknownRisk",
+        "splitCandidate",
+        "stale",
+        "impactScore",
+        "mergeEfficiency",
+        "fixes",
+        "assessments"
+      ],
+      "properties": {
+        "number": {
+          "type": "integer"
+        },
+        "url": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "platform": {
+          "type": "string"
+        },
+        "ageDays": {
+          "type": "integer"
+        },
+        "labels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "matched",
+            "unmatched",
+            "unparsed"
+          ]
+        },
+        "riskTier": {
+          "$ref": "#/definitions/riskTier"
+        },
+        "hasUnknownRisk": {
+          "type": "boolean"
+        },
+        "splitCandidate": {
+          "oneOf": [
+            {
+              "$ref": "#/definitions/splitCandidate"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stale": {
+          "type": "boolean"
+        },
+        "impactScore": {
+          "type": "number",
+          "minimum": 0
+        },
+        "mergeEfficiency": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "VIS / merge-risk tier. null when the risk tier is unknown (a child change has Risk 0)."
+        },
+        "fixes": {
+          "$ref": "#/definitions/fixSummary"
+        },
+        "assessments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/assessment"
+          }
+        },
+        "unparsedDeps": {
+          "type": "integer",
+          "description": "Optional; present only when one or more dependencies in the request could not be parsed."
+        }
+      }
+    },
+    "advisory": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "severity",
+        "recommendation",
+        "occurrences",
+        "addressedOccurrences"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "severity": {
+          "$ref": "#/definitions/severity"
+        },
+        "recommendation": {
+          "type": "string"
+        },
+        "occurrences": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/occurrence"
+          }
+        },
+        "addressedOccurrences": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many of the advisory's occurrences are addressed by some open update. Less than len(occurrences) means partially addressed."
+        }
+      }
+    }
+  }
+}

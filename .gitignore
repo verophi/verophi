@@ -1,0 +1,21 @@
+# Build artifacts
+bin/
+/verophi
+coverage.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+
+# Environment
+.env
+.env.*
+# Local scan outputs / scratch
+/sbom.json
+/verophi-sbom.json
+/verophi-output-*.json

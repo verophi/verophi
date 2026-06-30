@@ -1,0 +1,8 @@
+This package contains code vendored from:
+  https://github.com/masahiro331/go-mvn-version
+  Commit: d21fcd2e7de1862bbb6e821737e485fdbac60ea0 (2026-01-19)
+  Author: Masahiro Fujimura, with contributions from Teppei Fukuda (knqyf263)
+          and DmitriyLewen (Aqua Security / Trivy team)
+
+Licensed under the Apache License, Version 2.0.
+See https://github.com/masahiro331/go-mvn-version/blob/master/LICENCE

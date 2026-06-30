@@ -1,0 +1,44 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "labels": [
+    "renovate"
+  ],
+  "dependencyDashboard": true,
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "rangeStrategy": "bump",
+  "pinDigests": true,
+  "enabledManagers": [
+    "dockerfile",
+    "gomod",
+    "github-actions"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": [
+        "dockerfile"
+      ],
+      "groupName": "container base images"
+    },
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "aquasec/trivy"
+      ],
+      "versioning": "semver",
+      "allowedVersions": ">=0.70.0"
+    },
+    {
+      "matchManagers": [
+        "gomod",
+        "github-actions"
+      ],
+      "groupName": "go and ci dependencies"
+    }
+  ]
+}

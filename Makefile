@@ -80,12 +80,12 @@ coverage:
 		echo "Coverage meets 80% threshold"; \
 	fi
 
-## docker: Build Docker images
+## docker: Build Docker images (build the static linux binary first, then COPY it)
 docker:
-	docker build -t ghcr.io/verophi/verophi -f Dockerfile \
-		--build-arg VERSION=$(VERSION) --build-arg COMMIT=$(COMMIT) --build-arg BUILD_DATE=$(BUILD_DATE) .
-	docker build -t ghcr.io/verophi/verophi-trivy -f Dockerfile.trivy \
-		--build-arg VERSION=$(VERSION) --build-arg COMMIT=$(COMMIT) --build-arg BUILD_DATE=$(BUILD_DATE) .
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "$(LDFLAGS)" -o verophi ./cmd/verophi
+	docker build -t ghcr.io/verophi/verophi -f Dockerfile .
+	docker build -t ghcr.io/verophi/verophi-trivy -f Dockerfile.trivy .
+	rm -f verophi
 
 ## build-all: Cross-compile for Linux and macOS
 build-all:

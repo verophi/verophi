@@ -15,10 +15,11 @@
 
 # Build artifacts and local outputs
 bin/
-/verophi
 coverage.out
 t.json
 verophi-output-*.json
+sbom.json
+verophi-sbom.json
 
 # Tooling config not needed for the build
 .mise.toml

@@ -1,0 +1,34 @@
+name: E2E (Layer 1)
+
+# Pull request gate: run the verophi-inttest Layer 1 regression against an
+# ephemeral image built from this PR's head (nothing is pushed to a registry).
+# Keeping this green on every PR means main stays E2E-green, so tagging a tested
+# main commit for release is safe (no separate pre-publish gate needed).
+#
+# It calls the reusable workflow in verophi-inttest; org-level secrets are passed
+# via secrets: inherit. Two known constraints:
+#   - The reusable workflow must exist on verophi-inttest's default branch for the
+#     @main reference to resolve.
+#   - PRs from forks do not receive secrets and a fork's head commit does not live
+#     in verophi/verophi, so this gate is effectively maintainer/same-repo only
+#     (a GitHub limitation, not a bug here).
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  layer1:
+    uses: verophi/verophi-inttest/.github/workflows/layer1.yml@main
+    with:
+      # No image -> inttest builds verophi ephemerally from this ref.
+      verophi-ref: ${{ github.event.pull_request.head.sha }}
+    secrets: inherit

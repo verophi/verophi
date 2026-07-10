@@ -1,26 +1,23 @@
 name: Trivy image
 
-# Baut und veroeffentlicht verophi-trivy unabhaengig vom Release-Workflow. Zwei
-# Ausloeser, zwei Gruende:
-#   - push auf Dockerfile.trivy: Renovate bumpt den Trivy-Pin, der Merge feuert.
-#   - release published: ein neues verophi-Release liefert ein neues Binary, das
-#     ins Image gehoert.
-# In beiden Faellen kommt das verophi-Binary aus einem Release (gh release
-# download), damit das Image nie ein aelteres Binary enthaelt als das zuletzt
-# veroeffentlichte. Versionierte :vX.Y.Z-Tags bleiben dem Release-Workflow
-# vorbehalten; hier wandert nur :latest.
-#
-# Der Scan ist informativ (exit-code 0): verophi-trivy buendelt das Upstream-
-# Trivy-Binary, dessen transitive CVEs ausserhalb unserer Kontrolle liegen und
-# die Veroeffentlichung nicht blockieren sollen.
+# Baut verophi-trivy unabhaengig vom verophi-Release: bei Trivy-Pin-Bumps
+# (Renovate-Merge auf Dockerfile.trivy) und per Dispatch aus release.yml (ein
+# GITHUB_TOKEN-Publish loest kein release-Event aus, workflow_dispatch schon).
+# Das verophi-Binary kommt aus einem Release; nur :latest wandert, versionierte
+# Tags bleiben dem Release-Workflow. Der Scan ist informativ: das gebuendelte
+# Upstream-Trivy-Binary bringt CVEs mit, die wir nicht kontrollieren.
 
 on:
   push:
     branches: [main]
     paths: ["Dockerfile.trivy"]
-  release:
-    types: [published]
   workflow_dispatch:
+    inputs:
+      release-tag:
+        description: "Release-Tag, dessen Binary ins Image soll; leer = latest"
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -51,10 +48,9 @@ jobs:
       - name: Fetch the verophi binary from a release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # On a release trigger, pull that exact release (gh's "latest" never
-          # matches a prerelease). Otherwise (Dockerfile.trivy bump, manual run)
-          # fall back to the latest release.
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          # Leerer Input faellt auf das letzte Release zurueck (gh "latest"
+          # matcht nie ein Prerelease, daher uebergibt release.yml seinen Tag).
+          RELEASE_TAG: ${{ inputs.release-tag }}
         run: |
           if [ -n "$RELEASE_TAG" ]; then
             gh release download "$RELEASE_TAG" --repo "${GITHUB_REPOSITORY}" \

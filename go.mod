@@ -2,6 +2,8 @@ module github.com/verophi/verophi
 
 go 1.26
 
+toolchain go1.26.5
+
 require (
 	github.com/CycloneDX/cyclonedx-go v0.11.0
 	github.com/aquasecurity/go-gem-version v0.0.0-20201115065557-8eed6fe000ce

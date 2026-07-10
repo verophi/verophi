@@ -3,7 +3,6 @@
 </p>
 
 [![CI](https://github.com/verophi/verophi/actions/workflows/ci.yml/badge.svg)](https://github.com/verophi/verophi/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/verophi/verophi)](https://goreportcard.com/report/github.com/verophi/verophi)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/verophi/verophi)](go.mod)
 

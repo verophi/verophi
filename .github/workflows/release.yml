@@ -46,10 +46,9 @@ jobs:
       - name: Sign checksums (cosign keyless)
         run: |
           cosign sign-blob --yes \
-            --output-signature dist/SHA256SUMS.sig \
-            --output-certificate dist/SHA256SUMS.pem \
+            --bundle dist/SHA256SUMS.cosign.bundle \
             dist/SHA256SUMS
-          gh release upload "${GITHUB_REF_NAME}" dist/SHA256SUMS.sig dist/SHA256SUMS.pem
+          gh release upload "${GITHUB_REF_NAME}" dist/SHA256SUMS.cosign.bundle
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

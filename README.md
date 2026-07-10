@@ -24,7 +24,7 @@ Uses the public test-fixtures project on GitLab (intentionally outdated dependen
 curl -fsSLO https://raw.githubusercontent.com/verophi/verophi/main/examples/demo-sbom.json
 
 # Run against the public test-fixtures project (no token needed)
-docker run --rm -v "$PWD/demo-sbom.json:/sbom.json:ro" ghcr.io/verophi/verophi:latest \
+docker run --rm -t -v "$PWD/demo-sbom.json:/sbom.json:ro" ghcr.io/verophi/verophi:latest \
   analyze --sbom /sbom.json --gitlab-project verophi/test-fixtures
 ```
 
@@ -320,7 +320,7 @@ docker run --rm ghcr.io/verophi/verophi:latest version
 With Trivy included:
 
 ```bash
-docker run --rm -v "$PWD:/work" -w /work ghcr.io/verophi/verophi-trivy:latest \
+docker run --rm -t -v "$PWD:/work" -w /work ghcr.io/verophi/verophi-trivy:latest \
   "trivy fs --format cyclonedx --scanners vuln --output sbom.json . && verophi analyze --sbom sbom.json"
 ```
 

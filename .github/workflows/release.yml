@@ -71,7 +71,9 @@ jobs:
           path: verophi
           retention-days: 1
 
-  # Build each image, scan it locally, push only if clean, then sign + attest by digest.
+  # Build the image, scan it locally, push only if clean, then sign + attest by digest.
+  # verophi-trivy is built out of band by image-trivy.yml (it tracks the upstream
+  # trivy release, not the verophi version).
   images:
     needs: release
     runs-on: ubuntu-24.04
@@ -87,9 +89,6 @@ jobs:
           - name: verophi
             image: ghcr.io/verophi/verophi
             dockerfile: Dockerfile
-          - name: verophi-trivy
-            image: ghcr.io/verophi/verophi-trivy
-            dockerfile: Dockerfile.trivy
     steps:
       - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1

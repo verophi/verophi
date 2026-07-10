@@ -165,9 +165,18 @@ jobs:
     runs-on: ubuntu-24.04
     permissions:
       contents: write # flip the draft release to published
+      actions: write # dispatch image-trivy.yml
     steps:
       - name: Publish the release
         run: gh release edit "${GITHUB_REF_NAME}" --draft=false --repo "${GITHUB_REPOSITORY}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rebuild verophi-trivy with this release's binary
+        continue-on-error: true # the release is already published; a dispatch hiccup must not fail it
+        run: |
+          gh workflow run image-trivy.yml --repo "${GITHUB_REPOSITORY}" \
+            -f release-tag="${GITHUB_REF_NAME}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -176,7 +185,7 @@ jobs:
         continue-on-error: true # a dispatch hiccup must not fail the already-published release
         uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          app-id: ${{ vars.VEROPHI_CI_APP_ID }}
+          client-id: ${{ vars.VEROPHI_CI_APP_CLIENT_ID }}
           private-key: ${{ secrets.VEROPHI_CI_APP_PRIVATE_KEY }}
           owner: verophi
           repositories: verophi-inttest

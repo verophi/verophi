@@ -60,18 +60,24 @@ jobs:
           subject-checksums: dist/SHA256SUMS
           create-storage-record: false
 
-      - name: Stage linux binary for the image build
+      - name: Stage linux binaries for the multi-arch image build
         run: |
-          bin=$(find dist -type f -name verophi -path '*linux_amd64*' | head -1)
-          cp "$bin" verophi
+          cp "$(find dist -type f -name verophi -path '*linux_amd64*' | head -1)" verophi-amd64
+          cp "$(find dist -type f -name verophi -path '*linux_arm64*' | head -1)" verophi-arm64
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: verophi-linux-amd64
-          path: verophi
+          name: verophi-linux-binaries
+          path: |
+            verophi-amd64
+            verophi-arm64
           retention-days: 1
 
-  # Build the image, scan it locally, push only if clean, then sign + attest by digest.
+  # Build the amd64 image locally, scan it, and only on a clean scan push a
+  # linux/amd64 + linux/arm64 manifest, then sign + attest by the manifest digest.
+  # The scan runs on amd64 only: both arches ship the same chainguard/static base
+  # and the same Go module set, so the findings are identical. arm64 lets docker
+  # run natively on Apple Silicon instead of segfaulting under qemu emulation.
   # verophi-trivy is built out of band by image-trivy.yml (it tracks the upstream
   # trivy release, not the verophi version).
   images:
@@ -93,8 +99,8 @@ jobs:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
-          name: verophi-linux-amd64
-      - run: chmod +x verophi
+          name: verophi-linux-binaries
+      - run: chmod +x verophi-amd64 verophi-arm64
       - uses: docker/setup-buildx-action@d7f5e7f509e45cec5c76c4d5afdd7de93d0b3df5 # v4.1.0
       - uses: sigstore/cosign-installer@6f9f17788090df1f26f669e9d70d6ae9567deba6 # v4.1.2
         with:
@@ -106,11 +112,12 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build image locally (no push yet)
+      - name: Build amd64 image locally for scan (no push yet)
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
           context: .
           file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64
           load: true
           tags: ${{ matrix.name }}:scan
           provenance: false
@@ -124,12 +131,13 @@ jobs:
           ignore-unfixed: true
           cache: false
 
-      - name: Push image (only after a clean scan)
+      - name: Push multi-arch image (only after a clean scan)
         id: push
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
           context: .
           file: ${{ matrix.dockerfile }}
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: |
             ${{ matrix.image }}:${{ github.ref_name }}

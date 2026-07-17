@@ -8,7 +8,10 @@ FROM cgr.dev/chainguard/busybox:latest@sha256:decb5f3dd547fe23411bb9c02a8a6a78cf
 # no /var/lib state to provision.
 ENV HOME=/tmp \
     TRIVY_CACHE_DIR=/tmp/.cache/trivy
-COPY verophi /usr/local/bin/verophi
+# TARGETARCH selects the matching prebuilt verophi binary; trivy and busybox are
+# multi-arch upstream, so buildx assembles a linux/amd64 + linux/arm64 manifest.
+ARG TARGETARCH
+COPY verophi-${TARGETARCH} /usr/local/bin/verophi
 COPY --from=trivy /usr/local/bin/trivy /usr/local/bin/trivy
 USER 65532
 ENTRYPOINT ["sh", "-c"]

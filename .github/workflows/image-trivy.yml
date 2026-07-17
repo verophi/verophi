@@ -45,7 +45,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fetch the verophi binary from a release
+      - name: Fetch the verophi binaries from a release
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Leerer Input faellt auf das letzte Release zurueck (gh "latest"
@@ -54,19 +54,22 @@ jobs:
         run: |
           if [ -n "$RELEASE_TAG" ]; then
             gh release download "$RELEASE_TAG" --repo "${GITHUB_REPOSITORY}" \
-              --pattern verophi-linux-amd64 --output verophi
+              --pattern verophi-linux-amd64 --pattern verophi-linux-arm64
           else
             gh release download --repo "${GITHUB_REPOSITORY}" \
-              --pattern verophi-linux-amd64 --output verophi
+              --pattern verophi-linux-amd64 --pattern verophi-linux-arm64
           fi
-          chmod +x verophi
+          mv verophi-linux-amd64 verophi-amd64
+          mv verophi-linux-arm64 verophi-arm64
+          chmod +x verophi-amd64 verophi-arm64
 
-      - name: Push image
+      - name: Push multi-arch image
         id: push
         uses: docker/build-push-action@f9f3042f7e2789586610d6e8b85c8f03e5195baf # v7.2.0
         with:
           context: .
           file: Dockerfile.trivy
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ env.IMAGE }}:latest
           provenance: false

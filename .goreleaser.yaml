@@ -24,10 +24,7 @@ builds:
       - -X github.com/verophi/verophi/internal/version_info.BuildDate={{ .CommitDate }}
     mod_timestamp: "{{ .CommitTimestamp }}"
     goos: [linux, darwin]
-    goarch: [amd64, arm64]
-    ignore:
-      - goos: linux
-        goarch: arm64 # linux ships only amd64 (matches the container image)
+    goarch: [amd64, arm64] # linux amd64+arm64 feed the multi-arch container image
 
 archives:
   - id: verophi

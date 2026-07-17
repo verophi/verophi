@@ -1,8 +1,6 @@
 module github.com/verophi/verophi
 
-go 1.26
-
-toolchain go1.26.5
+go 1.26.5
 
 require (
 	github.com/CycloneDX/cyclonedx-go v0.11.0
@@ -16,7 +14,7 @@ require (
 	gitlab.com/gitlab-org/api/client-go v1.46.0
 	gitlab.com/gitlab-org/api/client-go/v2 v2.50.0
 	go.uber.org/mock v0.6.0
-	golang.org/x/mod v0.37.0
+	golang.org/x/mod v0.38.0
 	pgregory.net/rapid v1.3.0
 )
 

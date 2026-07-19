@@ -8,9 +8,11 @@ require (
 	github.com/aquasecurity/go-pep440-version v0.0.1
 	github.com/aquasecurity/go-version v0.0.1
 	github.com/google/go-github/v85 v85.0.0
+	github.com/google/go-github/v89 v89.0.0
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.11.1
 	gitlab.com/gitlab-org/api/client-go v1.46.0
+	gitlab.com/gitlab-org/api/client-go/v2 v2.51.0
 	go.uber.org/mock v0.6.0
 	golang.org/x/mod v0.38.0
 	pgregory.net/rapid v1.3.0

@@ -27,7 +27,7 @@ permissions:
 
 jobs:
   layer1:
-    uses: verophi/verophi-inttest/.github/workflows/layer1.yml@f9e48b6ac5ac8864d54b0bde80df7d4d68697114 # main
+    uses: verophi/verophi-inttest/.github/workflows/layer1.yml@7b13538e80a5b1ded16f4062b84d304af7dc0c80 # main
     with:
       # No image -> inttest builds verophi ephemerally from this ref.
       verophi-ref: ${{ github.event.pull_request.head.sha }}

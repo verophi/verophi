@@ -3,7 +3,7 @@
 # base provides a shell so `trivy ... && verophi ...` works as a single command.
 FROM aquasec/trivy:0.72.0@sha256:cffe3f5161a47a6823fbd23d985795b3ed72a4c806da4c4df16266c02accdd6f AS trivy
 
-FROM cgr.dev/chainguard/busybox:latest@sha256:decb5f3dd547fe23411bb9c02a8a6a78cfcd839bfb86b6154bcfd3688003f4b0
+FROM cgr.dev/chainguard/busybox:latest@sha256:b7f9fd93da766b1df7e68bf52297e164bce68fcd1800439b226f2d50f028efd3
 # Trivy's cache and HOME live under /tmp, which is writable by the nonroot user;
 # no /var/lib state to provision.
 ENV HOME=/tmp \

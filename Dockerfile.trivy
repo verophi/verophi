@@ -1,9 +1,9 @@
 # verophi + Trivy for one-shot CI use (scan then analyze). The verophi binary is
 # built ahead of time and copied in; Trivy comes from the official image. busybox
 # base provides a shell so `trivy ... && verophi ...` works as a single command.
-FROM aquasec/trivy:0.72.0@sha256:cffe3f5161a47a6823fbd23d985795b3ed72a4c806da4c4df16266c02accdd6f AS trivy
+FROM aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969 AS trivy
 
-FROM cgr.dev/chainguard/busybox:latest@sha256:b7f9fd93da766b1df7e68bf52297e164bce68fcd1800439b226f2d50f028efd3
+FROM cgr.dev/chainguard/busybox:latest@sha256:4e7cb67bb8e5c4c7385aa623b75c5ad41afe435e1910466f9b8db5bf939dcb41
 # Trivy's cache and HOME live under /tmp, which is writable by the nonroot user;
 # no /var/lib state to provision.
 ENV HOME=/tmp \

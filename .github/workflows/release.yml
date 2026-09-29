@@ -21,7 +21,7 @@ jobs:
   # checksums, and attest provenance for the binaries.
   release:
     needs: gate
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write # create the release and upload assets
       id-token: write # cosign keyless + provenance attestation
@@ -82,7 +82,7 @@ jobs:
   # trivy release, not the verophi version).
   images:
     needs: release
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: read
       packages: write # push to ghcr
@@ -170,7 +170,7 @@ jobs:
   # Everything passed: publish the draft release and kick off the inttest regression.
   publish:
     needs: images
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     permissions:
       contents: write # flip the draft release to published
       actions: write # dispatch image-trivy.yml
